@@ -1,1 +1,1 @@
-# Ambient-Sync-API
+# API for AmbientSync
