@@ -43,7 +43,7 @@ export const getPreference = async (user) => {
         "SELECT * FROM preference WHERE room_id= ? AND users=?",
         [user.room_id, user.id]
     );
-    if(get)
+    if(get[0][0])
         return get[0]
     return 0
 }
@@ -74,17 +74,21 @@ export const getAllUsersInRoom = async (user) => {
 }
 
 
-export const checkForPreference = async (user) => {
+export const mergeUsers = async (user) => {
 
-    const get=await pool.query(
-        "SELECT users FROM preference WHERE users LIKE '%,?%' OR users LIKE '%?,%'",
-        [user.room_id, user.room_id]
-    );
-    if(get)
-        return get[0]
+    const userLeft = await getAllUsersInRoom(user)
+        if (userLeft) {
+            let users = "";
+            for (let i = 0; i < userLeft.length; i++) {
+                users += userLeft[i].user_id
+                if (i + 1 < userLeft.length) {
+                    users += ","
+                }
+            }
+            return users
+        }
     return 0
 }
-
 
 
 

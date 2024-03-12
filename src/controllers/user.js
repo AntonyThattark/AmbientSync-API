@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { addPreference, addUser, checkForPreference, getAllUsersInRoom, getPreference, getUserByUsername, getUserInRoom, setUserIn, setUserOut, updateRoomSettings } from "../models/user.js";
+import { addPreference, addUser, getAllUsersInRoom, getPreference, getUserByUsername, getUserInRoom, mergeUsers, setUserIn, setUserOut, updateRoomSettings } from "../models/user.js";
 
 
 export const userRegisterController = async (traineeDetails) => {
@@ -51,17 +51,10 @@ export const updateSettingsController = async (user) => {
 
     if (userInRoom) {
         await setUserOut(user)
-        const userLeft = await getAllUsersInRoom(user)
+        const userLeft = await mergeUsers(user)
         if (userLeft) {
-            let text = "";
-            for (let i = 0; i < userLeft.length; i++) {
-                text += userLeft[i].user_id
-                if (i + 1 < userLeft.length) {
-                    text += ","
-                }
-            }
             const id = user.id
-            user.id = text
+            user.id = userLeft
             const getPrefer = await getPreference(user)
             if (getPrefer) {
                 const update = await updateRoomSettings(getPrefer[0])
@@ -83,16 +76,18 @@ export const updateSettingsController = async (user) => {
     }
 
     else if (otherUsersInRoom) {
-        const check = await checkForPreference(user)
-        const id = user.id
-        user.id = check[0].users
-        const getPrefer = await getPreference(user)
-        if (getPrefer) {
-            user.id = id
-            await setUserIn(user)
-            const update = await updateRoomSettings(getPrefer[0])
-            if (update)
-                return 1
+        await setUserIn(user)
+        const check=await mergeUsers(user)
+        if(check){
+            const id = user.id
+            user.id = check
+            const getPrefer = await getPreference(user)
+            if (getPrefer) {
+                user.id = id
+                const update = await updateRoomSettings(getPrefer[0])
+                if (update)
+                    return 1
+            }
         }
         return 0
     }
