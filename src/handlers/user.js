@@ -1,4 +1,4 @@
-import { loginController, updateSettingsController, userPreferenceController, userRegisterController } from "../controllers/user.js";
+import { getRoomSettings, loginController, updateSettingsController, userPreferenceController, userRegisterController } from "../controllers/user.js";
 
 
 
@@ -46,6 +46,19 @@ export const userLoginHandler = async (req, res) => {
 }
 
 
+export const getRoomSettingsHandler = async (req, res) => {
+    try {
+        const response = await getRoomSettings(req.params.room_id)
+        res.status(200).send(response)
+    } catch(exception) {
+        console.log("Unexpected error occured ", exception)
+        res.status(500).send({
+            errorMessage: "Unexpected error occured. Check server logs"
+        })
+    }
+}
+
+
 
 export const userPreferenceHandler = async (req,res)=>{
     try{
@@ -64,9 +77,9 @@ export const userPreferenceHandler = async (req,res)=>{
 
 
 export const updateSettingsHandler = async (req,res)=>{
-    try{
-        
-        const update=await updateSettingsController(req.body)
+    try{        
+        const body={room_id: req.params.room_id, id: req.params.user_id}
+        const update=await updateSettingsController(body)
         if(update){
             res.status(200).json("Update successfull")
             return;

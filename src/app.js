@@ -8,7 +8,7 @@
 
 import express from 'express';
 import cors from 'cors';
-import { updateSettingsHandler, userLoginHandler, userPreferenceHandler, userRegisterHandler } from './handlers/user.js';
+import { getRoomSettingsHandler, updateSettingsHandler, userLoginHandler, userPreferenceHandler, userRegisterHandler } from './handlers/user.js';
 import { checkDatabaseConnection } from './util/MySQL.js';
 import env from './config/keys.js';
 
@@ -38,8 +38,10 @@ app.post('/user/register', express.json(), userRegisterHandler)
 app.post('/user/login', express.json(), userLoginHandler)
 
 app.get('/user/preferrence', express.json(), userPreferenceHandler)
-app.get('/user/updateRoomSettings', express.json(), updateSettingsHandler)
 
+//app.put('/user/updateRoomSettings', express.json(), updateSettingsHandler)
+app.put('/rooms/:room_id/users/:user_id/scan', updateSettingsHandler)
+app.get('/rooms/:room_id/settings', getRoomSettingsHandler)
 
 
 

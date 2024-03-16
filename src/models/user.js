@@ -49,6 +49,18 @@ export const getPreference = async (user) => {
 }
 
 
+export const getSettings = async (user) => {
+
+    const get=await pool.query(
+        "SELECT * FROM room WHERE id= ?",
+        [user]
+    );
+    if(get)
+        return get[0]
+    return 0
+}
+
+
 
 export const getUserInRoom = async (user) => {
 

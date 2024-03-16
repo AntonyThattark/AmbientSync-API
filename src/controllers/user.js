@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
-import { addPreference, addUser, getAllUsersInRoom, getPreference, getUserByUsername, getUserInRoom, mergeUsers, setUserIn, setUserOut, updateRoomSettings } from "../models/user.js";
+import { addPreference, addUser, getAllUsersInRoom, getPreference, getSettings, 
+        getUserByUsername, getUserInRoom, mergeUsers, setUserIn, setUserOut, updateRoomSettings } from "../models/user.js";
 
 
 export const userRegisterController = async (traineeDetails) => {
@@ -42,6 +43,16 @@ export const userPreferenceController = async (userId) => {
         return prefer
     return 0
 }
+
+
+
+export const getRoomSettings = async (room) => {
+    //const occupants = await getOccupantsOfRoom(room)
+    let settings = await getSettings(room)
+
+    return settings
+}
+
 
 
 export const updateSettingsController = async (user) => {
