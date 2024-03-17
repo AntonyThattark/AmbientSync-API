@@ -46,7 +46,7 @@ export const userPreferenceController = async (userId) => {
 
 
 
-export const getRoomSettings = async (room) => {
+export const getRoomSettingsController = async (room) => {
     //const occupants = await getOccupantsOfRoom(room)
     let settings = await getSettings(room)
 

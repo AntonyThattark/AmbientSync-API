@@ -1,4 +1,4 @@
-import { getRoomSettings, loginController, updateSettingsController, userPreferenceController, userRegisterController } from "../controllers/user.js";
+import { getRoomSettingsController, loginController, updateSettingsController, userPreferenceController, userRegisterController } from "../controllers/user.js";
 
 
 
@@ -48,7 +48,7 @@ export const userLoginHandler = async (req, res) => {
 
 export const getRoomSettingsHandler = async (req, res) => {
     try {
-        const response = await getRoomSettings(req.params.room_id)
+        const response = await getRoomSettingsController(req.params.room_id)
         res.status(200).send(response)
     } catch(exception) {
         console.log("Unexpected error occured ", exception)
