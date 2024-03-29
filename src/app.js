@@ -1,5 +1,4 @@
 //const express= require('express')
-
 // const getDBConnection=require('./util/mongoDB.js')
 // const { userRegisterHandler } = require('./handlers/user.js')
 //import { getDBConnection } from './util/mongoDB.js';
@@ -8,9 +7,11 @@
 
 import express from 'express';
 import cors from 'cors';
-import { getRoomSettingsHandler, updateSettingsHandler, userLoginHandler, userPreferenceHandler, userRegisterHandler } from './handlers/user.js';
+import { getRoomSettingsHandler, updateSettingsHandler, userPreferenceHandler, 
+         } from './handlers/preference.js';
 import { checkDatabaseConnection } from './util/MySQL.js';
 import env from './config/keys.js';
+import { sendVerificationHandler, userLoginHandler, userRegisterHandler } from './handlers/user.js';
 
 const app = express()
 app.use(cors());
@@ -36,10 +37,10 @@ app.use(cors());
 
 app.post('/user/register', express.json(), userRegisterHandler)
 app.post('/user/login', express.json(), userLoginHandler)
+app.get('/user/:id/verification',sendVerificationHandler)
 
 app.get('/user/preferrence', express.json(), userPreferenceHandler)
 
-//app.put('/user/updateRoomSettings', express.json(), updateSettingsHandler)
 app.put('/rooms/:room_id/users/:user_id/scan', updateSettingsHandler)
 app.get('/rooms/:room_id/settings', getRoomSettingsHandler)
 
@@ -49,16 +50,12 @@ app.use((req, res, next) => {
     res.status(404).json({ errorMessage: "URL not found" })
 })
 
-// app.listen(5000, () => {
-//     console.log("listening")
-// })
-
 
 const startServerIfHealthy = async () => {
     try {
         await checkDatabaseConnection()
         app.listen(env.serverPort, () => {
-            console.log("Listening on port ", env.serverPort);
+            console.log("Listening on port: ", env.serverPort);
         })
     } catch (exception) {
         console.log("Error while starting server ", exception.message)

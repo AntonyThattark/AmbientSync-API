@@ -1,4 +1,6 @@
-import { getRoomSettingsController, loginController, updateSettingsController, userPreferenceController, userRegisterController } from "../controllers/user.js";
+import { loginController, userRegisterController, verifyUserController } from "../controllers/user.js";
+//import { sendVerificationMail } from "../util/sendMail.js";
+
 
 
 
@@ -26,8 +28,8 @@ export const userRegisterHandler = async (req, res) => {
 
 export const userLoginHandler = async (req, res) => {
     try {
-        const { username, password } = req.body;
-        if (!(username && password)) {
+        const { email, password } = req.body;
+        if (!(email && password)) {
             res.status(400).json("All input is required");
             return;
         }
@@ -46,48 +48,21 @@ export const userLoginHandler = async (req, res) => {
 }
 
 
-export const getRoomSettingsHandler = async (req, res) => {
+export const sendVerificationHandler = async (req, res) => {
+
     try {
-        const response = await getRoomSettingsController(req.params.room_id)
-        res.status(200).send(response)
-    } catch(exception) {
-        console.log("Unexpected error occured ", exception)
-        res.status(500).send({
-            errorMessage: "Unexpected error occured. Check server logs"
-        })
+        // const user = { email: 'antonythattarkunnel@gmail.com' }
+        // const success = await sendVerificationMail(user)
+        // if (success) {
+        //     res.status(200).json({ successMessage: "Mail was successfully send" })
+        // }
+        const verify=verifyUserController(req.params.id)
+        if(verify)
+            res.status(200).json({ successMessage: "Verification Successfull" })
     }
-}
-
-
-
-export const userPreferenceHandler = async (req,res)=>{
-    try{
-        const prefer=await userPreferenceController(req.body)
-        if(prefer){
-            res.status(200).json(prefer)
-            return;
-        }
-        res.status(500).json({ Message: "Nothing Found" })
-    }
-    catch (error) {
-        console.log("An unexpected error occured while fetching ", error.message)
+    catch (e) {
+        console.log("An unexpected error occured while sending mail ", e.message)
         res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
     }
-}
 
-
-export const updateSettingsHandler = async (req,res)=>{
-    try{        
-        const body={room_id: req.params.room_id, id: req.params.user_id}
-        const update=await updateSettingsController(body)
-        if(update){
-            res.status(200).json("Update successfull")
-            return;
-        }
-        res.status(500).json({ Message: "Nothing Found" })
-    }
-    catch (error) {
-        console.log("An unexpected error occured while fetching ", error.message)
-        res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
-    }
 }

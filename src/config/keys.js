@@ -6,6 +6,8 @@ dotenv.config();
 
 const envMap = {
     serverPort: "API_HOST_PORT",
+    serverIP: "API_HOST_IP",
+
     authTokenKey: "TOKEN_KEY",
     authTokenExpiry: "TOKEN_EXPIRY",
 
