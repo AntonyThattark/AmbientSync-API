@@ -39,7 +39,7 @@ app.post('/user/register', express.json(), userRegisterHandler)
 app.post('/user/login', express.json(), userLoginHandler)
 app.get('/user/:id/verification',sendVerificationHandler)
 
-app.get('/user/preferrence', express.json(), userPreferenceHandler)
+app.put('/user/preferrence', express.json(), userPreferenceHandler)
 
 app.put('/rooms/:room_id/users/:user_id/scan', updateSettingsHandler)
 app.get('/rooms/:room_id/settings', getRoomSettingsHandler)

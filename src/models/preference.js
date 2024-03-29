@@ -6,16 +6,65 @@ import { pool } from "../util/MySQL.js";
 
 
 
-export const addPreference = async (userId) => {
+export const addPreference = async (user) => {
 
     const add=await pool.query(
         "INSERT INTO preference (room_id, users, light_color, light_intensity, fan_speed, room_temp) VALUES (?,?,?,?,?,?)",
-        []
+        [user.room_id, user.id, user.light_color, user.light_intensity, user.fan_speed, user.room_temp ]
     );
     if(add)
         return 1
     return 0
 }
+
+
+
+export const updatePreference = async (user) => {
+
+    const {room_id, light_color, light_intensity, fan_speed, room_temp}=user
+
+    const basicQuery = "UPDATE preference SET ";
+    let fields = [];
+    let values = [];
+    if (light_color) {
+        fields.push("light_color = ?")
+        values.push(light_color)
+    }
+    else
+        fields.push("light_color = NULL")
+    if (light_intensity) {
+        fields.push("light_intensity = ?")
+        values.push(light_intensity)
+    }
+    else
+        fields.push("light_intensity = NULL")
+    if (fan_speed) {
+        fields.push("fan_speed = ?")
+        values.push(fan_speed)
+    }
+    else
+        fields.push("fan_speed = NULL")
+    if (room_temp) {
+        fields.push("room_temp = ?")
+        values.push(room_temp)
+    }
+    else
+        fields.push("room_temp = NULL")
+
+    const whereQuery = " WHERE users = ? and room_id=?"
+    values.push(user.id , user.room_id)
+
+    const sqlQuery = basicQuery + fields.join(",") + whereQuery;
+
+
+    const result = await pool.query(sqlQuery, values);
+    if (result[0].affectedRows === 0) {
+        return false
+    }
+    return true
+}
+
+
 
 
 export const getPreference = async (user) => {

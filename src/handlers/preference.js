@@ -17,23 +17,6 @@ export const getRoomSettingsHandler = async (req, res) => {
 }
 
 
-
-export const userPreferenceHandler = async (req,res)=>{
-    try{
-        const prefer=await userPreferenceController(req.body)
-        if(prefer){
-            res.status(200).json(prefer)
-            return;
-        }
-        res.status(500).json({ Message: "Nothing Found" })
-    }
-    catch (error) {
-        console.log("An unexpected error occured while fetching ", error.message)
-        res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
-    }
-}
-
-
 export const updateSettingsHandler = async (req,res)=>{
     try{        
         const body={room_id: req.params.room_id, id: req.params.user_id}
@@ -49,3 +32,22 @@ export const updateSettingsHandler = async (req,res)=>{
         res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
     }
 }
+
+
+
+export const userPreferenceHandler = async (req,res)=>{
+    try{
+        const prefer=await userPreferenceController(req.body)
+        if(prefer){
+            res.status(200).json("User preference added successfully")
+            return;
+        }
+        res.status(500).json({ Message: "Nothing Found" })
+    }
+    catch (error) {
+        console.log("An unexpected error occured while fetching ", error.message)
+        res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
+    }
+}
+
+

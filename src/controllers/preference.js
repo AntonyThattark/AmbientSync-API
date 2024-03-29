@@ -1,18 +1,22 @@
 
 import { addPreference, getAllUsersInRoom, getPreference, getSettings, 
-         getUserInRoom, mergeUsers, setUserIn, setUserOut, updateRoomSettings } from "../models/preference.js";
+         getUserInRoom, mergeUsers, setUserIn, setUserOut, updatePreference, updateRoomSettings } from "../models/preference.js";
 
 
 
 
 
+export const userPreferenceController = async (user) => {
 
-export const userPreferenceController = async (userId) => {
-
-    const prefer = await addPreference(userId.userId)
-    //console.log(prefer)
+    const preferExist= await getPreference(user)
+    if(preferExist){
+        const update=await updatePreference(user)
+        if (update)
+            return 1
+    }
+    const prefer = await addPreference(user)
     if (prefer)
-        return prefer
+        return 1
     return 0
 }
 
