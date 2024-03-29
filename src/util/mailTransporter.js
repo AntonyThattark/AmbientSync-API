@@ -4,8 +4,8 @@ export const createMailTransporter = async () => {
     const transporter = nodemailer.createTransport({
         service: 'hotmail',
         auth: {
-            user: 'ambientSync@hotmail.com',
-            pass: 'Ambient@sync',
+            user: '',
+            pass: '',
         },
     })
     return transporter;
