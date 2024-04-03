@@ -62,3 +62,13 @@ export const verifyUser = async (user) => {
     return 0
 }
 
+
+export const verifyKey = async (key) => {
+    const verify =await pool.query(
+        "SELECT * FROM pkeys where product_key = ?",
+        [key]
+    );
+    if(verify)
+        return verify[0]
+    return 0
+}

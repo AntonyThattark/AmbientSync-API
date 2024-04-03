@@ -7,18 +7,19 @@
 
 import express from 'express';
 import cors from 'cors';
-import { getRoomSettingsHandler, updateSettingsHandler, userPreferenceHandler, 
-         } from './handlers/preference.js';
+import {
+    getRoomDetailsHandler, getRoomSettingsHandler, updateSettingsHandler, userPreferenceHandler,
+} from './handlers/preference.js';
 import { checkDatabaseConnection } from './util/MySQL.js';
 import env from './config/keys.js';
-import { sendVerificationHandler, userLoginHandler, userRegisterHandler } from './handlers/user.js';
+import { sendVerificationHandler, userLoginHandler, userRegisterHandler, verifyKeyHandler } from './handlers/user.js';
 
 const app = express()
 app.use(cors());
 
 //let client
 // app.get('/users', async (req, res) => {
-    
+
 //     const db = await getDBConnection()
 //     let dtl = []
 //     console.log("reached")
@@ -37,9 +38,12 @@ app.use(cors());
 
 app.post('/user/register', express.json(), userRegisterHandler)
 app.post('/user/login', express.json(), userLoginHandler)
-app.get('/user/:id/verification',sendVerificationHandler)
+app.get('/user/verifykey/:productkey', verifyKeyHandler)
+app.get('/user/:id/verification', sendVerificationHandler)
 
 app.put('/user/preferrence', express.json(), userPreferenceHandler)
+
+app.get('/user/:id/rooms', getRoomDetailsHandler)
 
 app.put('/rooms/:room_id/users/:user_id/scan', updateSettingsHandler)
 app.get('/rooms/:room_id/settings', getRoomSettingsHandler)

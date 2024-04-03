@@ -1,4 +1,4 @@
-import { loginController, userRegisterController, verifyUserController } from "../controllers/user.js";
+import { loginController, userRegisterController, verifyKeyController, verifyUserController } from "../controllers/user.js";
 //import { sendVerificationMail } from "../util/sendMail.js";
 
 
@@ -12,7 +12,7 @@ export const userRegisterHandler = async (req, res) => {
             return;
         }
 
-        const register = await userRegisterController(req.body);
+        const register = await userRegisterController(req.body); 
         if (register) {
             res.status(200).json({ successMessage: "OTP was successfully send" })
             return;
@@ -56,8 +56,8 @@ export const sendVerificationHandler = async (req, res) => {
         // if (success) {
         //     res.status(200).json({ successMessage: "Mail was successfully send" })
         // }
-        const verify=verifyUserController(req.params.id)
-        if(verify)
+        const verify = verifyUserController(req.params.id)
+        if (verify)
             res.status(200).json({ successMessage: "Verification Successfull" })
     }
     catch (e) {
@@ -65,4 +65,21 @@ export const sendVerificationHandler = async (req, res) => {
         res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
     }
 
+}
+
+
+
+export const verifyKeyHandler = async (req, res) => {
+
+    try {
+        const verify = await verifyKeyController(req.params.productkey)
+        if (verify)
+            res.status(200).json({ successMessage: "Key Verification Successfull" })
+        else
+            res.status(500).json({ Message: "Key already taken or not found" })
+    }
+    catch (e) {
+        console.log("An unexpected error occured while verifying key ", e.message)
+        res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
+    }
 }
