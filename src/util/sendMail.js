@@ -3,8 +3,8 @@
 import env from "../config/keys.js";
 import { createMailTransporter } from "./mailTransporter.js";
 
-export const sendVerificationMail = async (user) => {
-    let str=env.serverIP+":"+env.serverPort+"/user/"+user.id+"/verification"
+export const sendVerificationMail = async (user, token) => {
+    let str=env.hostIP+":"+env.clientPort+"/user/verification/"+token
     console.log(str)
     const transporter =await createMailTransporter();
     const mailOptions = {
@@ -13,7 +13,7 @@ export const sendVerificationMail = async (user) => {
         subject: "Verify your email...",
         text: "This is a test email sent using Nodemailer.",
         html: `<p>Hello ${user.name}, verify your email by clicking this link...</p>
-        <a href='http://${env.serverIP}:${env.serverPort}/user/${user.id}/verification'>Click here to Verify Your Email</a>`,
+        <a href='http://${env.hostIP}:${env.clientPort}/user/emailverification/token/${token}'>Click here to Verify Your Email</a>`,
         
     };
     await transporter.sendMail(mailOptions, (error, info) => {

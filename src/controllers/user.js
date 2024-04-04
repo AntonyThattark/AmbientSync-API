@@ -10,16 +10,24 @@ import env from "../config/keys.js";
 export const userRegisterController = async (user) => {
 
     user.password = await bcrypt.hash(user.password, 10);
+    user.verificationKey=Math.trunc((Math.random() * 100000))
     const userExists = await getUserByUsername(user.email)
     if (userExists) {
         if (userExists.verified)
             return 0
-        await updateUserDetails(user, userExists.user_id)
+        user.id = userExists.user_id
+        await updateUserDetails(user)
     }
     else
         await addUser(user)
-    user.id = userExists.user_id
-    await sendVerificationMail(user);
+    const regUser= await getUserByUsername(user.email)
+    const token = jwt.sign(
+        { userId: regUser.id, verificationKey: user.verificationKey },
+        env.authTokenKey,
+        { expiresIn: env.authTokenExpiry }
+    );
+    //console.log(regUser,token)
+    await sendVerificationMail(user, token);
     return true;
 }
 

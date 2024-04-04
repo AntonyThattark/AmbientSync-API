@@ -51,11 +51,7 @@ export const userLoginHandler = async (req, res) => {
 export const sendVerificationHandler = async (req, res) => {
 
     try {
-        // const user = { email: 'antonythattarkunnel@gmail.com' }
-        // const success = await sendVerificationMail(user)
-        // if (success) {
-        //     res.status(200).json({ successMessage: "Mail was successfully send" })
-        // }
+        
         const verify = verifyUserController(req.params.id)
         if (verify)
             res.status(200).json({ successMessage: "Verification Successfull" })

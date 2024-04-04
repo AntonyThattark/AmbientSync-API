@@ -11,8 +11,8 @@ export const getUserByUsername = async (email) => {
     return {};
 }
 
-export const updateUserDetails = async (user, id) => {
-    const { name, email, password } = user;
+export const updateUserDetails = async (user) => {
+    const { name, email, password, verificationKey } = user;
 
     const basicQuery = "UPDATE user SET ";
     let fields = [];
@@ -29,9 +29,13 @@ export const updateUserDetails = async (user, id) => {
         fields.push("password = ?")
         values.push(password)
     }
+    if (user.verificationKey) {
+        fields.push("verification_key = ?")
+        values.push(verificationKey)
+    }
 
     const whereQuery = " WHERE user_id = ?"
-    values.push(id)
+    values.push(user.id)
 
     const sqlQuery = basicQuery + fields.join(",") + whereQuery;
 

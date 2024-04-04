@@ -6,12 +6,12 @@ dotenv.config();
 
 const envMap = {
     serverPort: "API_HOST_PORT",
-    serverIP: "API_HOST_IP",
+    hostIP: "HOST_IP",
+    clientPort: "CLIENT_HOST_PORT",
 
     authTokenKey: "TOKEN_KEY",
     authTokenExpiry: "TOKEN_EXPIRY",
 
-    sendgridApiKey: "SENDGRID_API_KEY",
 
     MONGO_DB_URL: "DB_LINK",
     dbHost: "DB_HOST",
