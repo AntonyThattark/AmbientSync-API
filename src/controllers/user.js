@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { addUser, getUserByUsername, updateUserDetails, verifyKey, verifyUser } from "../models/user.js";
+import { addAccess, addRoom, addUser, getUserByUsername, updateUserDetails, validateKey, verifyKey, verifyToken, verifyUser } from "../models/user.js";
 import { sendVerificationMail } from "../util/sendMail.js";
 import env from "../config/keys.js";
 
@@ -22,7 +22,7 @@ export const userRegisterController = async (user) => {
         await addUser(user)
     const regUser= await getUserByUsername(user.email)
     const token = jwt.sign(
-        { userId: regUser.id, verificationKey: user.verificationKey },
+        { userId: regUser.user_id, verificationKey: user.verificationKey, key: user.key },
         env.authTokenKey,
         { expiresIn: env.authTokenExpiry }
     );
@@ -32,11 +32,16 @@ export const userRegisterController = async (user) => {
 }
 
 
-export const verifyUserController = async (user) => {
+export const emailVerificationController = async (decoded, roomName) => {
 
-    const verify = await verifyUser(user)
-    if (verify)
+    const verify= await verifyToken(decoded)
+    if (verify){
+        await verifyUser(decoded.userId)
+        const roomID=await addRoom(roomName, decoded.userId)
+        await addAccess(decoded.userId, roomID)
+        await validateKey(decoded.key)
         return 1
+    }        
     return 0
 }
 

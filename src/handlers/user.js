@@ -1,4 +1,6 @@
-import { loginController, userRegisterController, verifyKeyController, verifyUserController } from "../controllers/user.js";
+import { emailVerificationController, loginController, userRegisterController, verifyKeyController } from "../controllers/user.js";
+import env from "../config/keys.js";
+import jwt from "jsonwebtoken";
 //import { sendVerificationMail } from "../util/sendMail.js";
 
 
@@ -48,17 +50,23 @@ export const userLoginHandler = async (req, res) => {
 }
 
 
-export const sendVerificationHandler = async (req, res) => {
+export const emailVerificationHandler = async (req, res) => {
 
-    try {
-        
-        const verify = verifyUserController(req.params.id)
-        if (verify)
-            res.status(200).json({ successMessage: "Verification Successfull" })
+    const {token, roomName}=req.body
+    if (!token || !roomName) {
+        return res.status(403).json({ errorMessage: "Insufficient details" });
     }
-    catch (e) {
-        console.log("An unexpected error occured while sending mail ", e.message)
-        res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
+    try {
+        console.log(req.body)
+        const decoded = jwt.verify(token, env.authTokenKey);
+        console.log(decoded)
+        const verify=1// await emailVerificationController(decoded, roomName)
+        if(verify)
+            res.status(200).json("Verification Successfull")
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(401).json({ errorMessage: "Invalid Token" });
     }
 
 }

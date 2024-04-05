@@ -12,7 +12,7 @@ import {
 } from './handlers/preference.js';
 import { checkDatabaseConnection } from './util/MySQL.js';
 import env from './config/keys.js';
-import { sendVerificationHandler, userLoginHandler, userRegisterHandler, verifyKeyHandler } from './handlers/user.js';
+import { emailVerificationHandler, userLoginHandler, userRegisterHandler, verifyKeyHandler } from './handlers/user.js';
 
 const app = express()
 app.use(cors());
@@ -39,7 +39,7 @@ app.use(cors());
 app.post('/user/register', express.json(), userRegisterHandler)
 app.post('/user/login', express.json(), userLoginHandler)
 app.get('/user/verifykey/:productkey', verifyKeyHandler)
-app.get('/user/:id/verification', sendVerificationHandler)
+app.post('/user/emailverification', express.json(), emailVerificationHandler)
 
 app.put('/user/preferrence', express.json(), userPreferenceHandler)
 
