@@ -21,7 +21,7 @@ export const addPreference = async (user) => {
 
 export const updatePreference = async (user) => {
 
-    const {room_id, light_color, light_intensity, fan_speed, room_temp}=user
+    const { light_color, light_intensity, fan_speed, room_temp}=user
 
     const basicQuery = "UPDATE preference SET ";
     let fields = [];
@@ -30,28 +30,23 @@ export const updatePreference = async (user) => {
         fields.push("light_color = ?")
         values.push(light_color)
     }
-    else
-        fields.push("light_color = NULL")
+    
     if (light_intensity) {
         fields.push("light_intensity = ?")
         values.push(light_intensity)
     }
-    else
-        fields.push("light_intensity = NULL")
+    
     if (fan_speed) {
         fields.push("fan_speed = ?")
         values.push(fan_speed)
     }
-    else
-        fields.push("fan_speed = NULL")
+    
     if (room_temp) {
         fields.push("room_temp = ?")
         values.push(room_temp)
     }
-    else
-        fields.push("room_temp = NULL")
 
-    const whereQuery = " WHERE users = ? and room_id=?"
+    const whereQuery = " WHERE users = '?' and room_id=?"
     values.push(user.id , user.room_id)
 
     const sqlQuery = basicQuery + fields.join(",") + whereQuery;
@@ -70,7 +65,7 @@ export const updatePreference = async (user) => {
 export const getPreference = async (user) => {
 
     const get=await pool.query(
-        "SELECT * FROM preference WHERE room_id= ? AND users=?",
+        "SELECT * FROM preference WHERE room_id= ? AND users= '?' ",
         [user.room_id, user.id]
     );
     if(get[0][0])
@@ -219,6 +214,16 @@ export const getRoomDetails = async (user) => {
 }
 
 
+export const checkUserPrimary = async (user) => {
+
+    const info=await pool.query(
+        "SELECT * FROM room WHERE primary_user_id =? AND id=?;",
+        [user.userId, user.roomId]
+    );
+    if(info)
+        return info[0]
+    return 0
+}
 
 
 

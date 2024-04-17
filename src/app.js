@@ -8,11 +8,13 @@
 import express from 'express';
 import cors from 'cors';
 import {
+    checkUserPrimaryHandler,
     getRoomDetailsHandler, getRoomSettingsHandler, updateSettingsHandler, userPreferenceHandler,
 } from './handlers/preference.js';
 import { checkDatabaseConnection } from './util/MySQL.js';
 import env from './config/keys.js';
 import { emailVerificationHandler, userLoginHandler, userRegisterHandler, verifyKeyHandler } from './handlers/user.js';
+import { userAuth } from './middleware/auth.js';
 
 const app = express()
 app.use(cors());
@@ -41,9 +43,10 @@ app.post('/user/login', express.json(), userLoginHandler)
 app.get('/user/verifykey/:productkey', verifyKeyHandler)
 app.post('/user/emailverification', express.json(), emailVerificationHandler)
 
-app.put('/user/preferrence', express.json(), userPreferenceHandler)
+app.put('/user/preferrence', express.json(), userAuth, userPreferenceHandler)
 
 app.get('/user/:id/rooms', getRoomDetailsHandler)
+app.get('/user/checkPrimary/:roomId',userAuth, checkUserPrimaryHandler)
 
 app.put('/rooms/:room_id/users/:user_id/scan', updateSettingsHandler)
 app.get('/rooms/:room_id/settings', getRoomSettingsHandler)

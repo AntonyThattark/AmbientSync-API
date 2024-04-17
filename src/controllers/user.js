@@ -47,16 +47,16 @@ export const emailVerificationController = async (decoded, roomName) => {
 
 
 export const loginController = async (loginDetails) => {
-    const trainee = await getUserByUsername(loginDetails.email);
+    const user = await getUserByUsername(loginDetails.email);
     const username = loginDetails.email;
-    if (loginDetails && trainee && (await bcrypt.compare(loginDetails.password, trainee.password))) {
+    if (loginDetails && user && (await bcrypt.compare(loginDetails.password, user.password))) {
         const token = jwt.sign(
-            { username, userId: trainee.id },
+            { username, userId: user.user_id },
             env.authTokenKey,
             { expiresIn: env.authTokenExpiry }
         );
         const response = {
-            token: `Bearer ${token}`, email:loginDetails.email, name: trainee.name,
+            token: `Bearer ${token}`, email:loginDetails.email, name: user.name,
         }
         return response;
     }

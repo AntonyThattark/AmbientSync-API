@@ -1,5 +1,5 @@
 
-import { addPreference, getAllUsersInRoom, getPreference, getRoomDetails, getSettings, 
+import { addPreference, checkUserPrimary, getAllUsersInRoom, getPreference, getRoomDetails, getSettings, 
          getUserInRoom, mergeUsers, setUserIn, setUserOut, updatePreference, updateRoomSettings } from "../models/preference.js";
 
 
@@ -96,4 +96,12 @@ export const getRoomDetailsController = async (user) => {
     let info = await getRoomDetails(user)
 
     return info
+}
+
+
+export const checkUserPrimaryController = async (user) => {
+    let check = await checkUserPrimary(user)
+    if(check)
+        return check[0]
+    return 0
 }

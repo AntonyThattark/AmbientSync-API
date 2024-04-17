@@ -1,4 +1,5 @@
 import {
+    checkUserPrimaryController,
     getRoomDetailsController, getRoomSettingsController, updateSettingsController,
     userPreferenceController
 } from "../controllers/preference.js";
@@ -39,6 +40,7 @@ export const updateSettingsHandler = async (req, res) => {
 
 export const userPreferenceHandler = async (req, res) => {
     try {
+        req.body.id= req.user.userId;
         const prefer = await userPreferenceController(req.body)
         if (prefer) {
             res.status(200).json("User preference added successfully")
@@ -63,6 +65,20 @@ export const getRoomDetailsHandler = async (req, res) => {
         console.log("Unexpected error occured while fetching room details", exception)
         res.status(500).send({
             errorMessage: "Unexpected error occured while fetching room details. Check server logs"
+        })
+    }
+}
+
+
+export const checkUserPrimaryHandler = async (req, res) => {
+    try {
+        req.user.roomId= req.params.roomId;
+        const response = await checkUserPrimaryController(req.user)
+        res.status(200).send(response)
+    } catch (exception) {
+        console.log("Unexpected error occured while checking primary user", exception)
+        res.status(500).send({
+            errorMessage: "Unexpected error occured while checking primary user. Check server logs"
         })
     }
 }
