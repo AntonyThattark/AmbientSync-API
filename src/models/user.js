@@ -103,7 +103,7 @@ export const addRoom = async (roomName, id) => {
     return 0
 }
 
-export const addAccess = async () => {
+export const addAccess = async (id, room_id) => {
     const add =await pool.query(
         "INSERT INTO access (user_id, room_id) VALUES (?, ?)",
         [id, room_id]

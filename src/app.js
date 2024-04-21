@@ -1,9 +1,3 @@
-//const express= require('express')
-// const getDBConnection=require('./util/mongoDB.js')
-// const { userRegisterHandler } = require('./handlers/user.js')
-//import { getDBConnection } from './util/mongoDB.js';
-
-
 
 import express from 'express';
 import cors from 'cors';
@@ -15,28 +9,13 @@ import { checkDatabaseConnection } from './util/MySQL.js';
 import env from './config/keys.js';
 import { emailVerificationHandler, userLoginHandler, userRegisterHandler, verifyKeyHandler } from './handlers/user.js';
 import { userAuth } from './middleware/auth.js';
+import { createConnection } from './util/mqtt.js';
 
 const app = express()
 app.use(cors());
 
-//let client
-// app.get('/users', async (req, res) => {
 
-//     const db = await getDBConnection()
-//     let dtl = []
-//     console.log("reached")
-
-//     db.collection('user_preference')
-//         .find()
-//         .forEach(dtls => dtl.push(dtls))
-//         .then(() => {
-//             console.log(dtl)
-//             res.status(200).json(dtl)
-//         })
-//         .catch(() => {
-//             res.status(500).json({ error: 'not fetched' })
-//         })
-// })
+createConnection()
 
 app.post('/user/register', express.json(), userRegisterHandler)
 app.post('/user/login', express.json(), userLoginHandler)
@@ -70,3 +49,32 @@ const startServerIfHealthy = async () => {
 }
 
 startServerIfHealthy();
+
+
+
+
+//const express= require('express')
+// const getDBConnection=require('./util/mongoDB.js')
+// const { userRegisterHandler } = require('./handlers/user.js')
+//import { getDBConnection } from './util/mongoDB.js';
+
+
+
+//let client
+// app.get('/users', async (req, res) => {
+
+//     const db = await getDBConnection()
+//     let dtl = []
+//     console.log("reached")
+
+//     db.collection('user_preference')
+//         .find()
+//         .forEach(dtls => dtl.push(dtls))
+//         .then(() => {
+//             console.log(dtl)
+//             res.status(200).json(dtl)
+//         })
+//         .catch(() => {
+//             res.status(500).json({ error: 'not fetched' })
+//         })
+// })

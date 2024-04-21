@@ -31,7 +31,7 @@ export const updateSettingsHandler = async (req, res) => {
         res.status(500).json({ Message: "Nothing Found" })
     }
     catch (error) {
-        console.log("An unexpected error occured while fetching ", error.message)
+        console.log("An unexpected error occured while scanning user ", error.message)
         res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
     }
 }

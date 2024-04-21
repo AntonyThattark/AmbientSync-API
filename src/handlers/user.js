@@ -60,7 +60,7 @@ export const emailVerificationHandler = async (req, res) => {
         console.log(req.body)
         const decoded = jwt.verify(token, env.authTokenKey);
         console.log(decoded)
-        const verify=1// await emailVerificationController(decoded, roomName)
+        const verify= await emailVerificationController(decoded, roomName)
         if(verify)
             res.status(200).json("Verification Successfull")
     }

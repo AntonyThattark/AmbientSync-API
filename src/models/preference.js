@@ -65,7 +65,7 @@ export const updatePreference = async (user) => {
 export const getPreference = async (user) => {
 
     const get=await pool.query(
-        "SELECT * FROM preference WHERE room_id= ? AND users= '?' ",
+        "SELECT * FROM preference WHERE room_id= ? AND users= ? ",
         [user.room_id, user.id]
     );
     if(get[0][0])
@@ -205,7 +205,7 @@ export const setUserOut = async (user) => {
 export const getRoomDetails = async (user) => {
 
     const info=await pool.query(
-        "SELECT room_id, room_name FROM preference, room WHERE users = ? and room.id=preference.room_id",
+        "SELECT room.id AS room_id, room_name FROM preference, room WHERE users = 2 AND room_id=room.id ORDER BY room.id ",
         [user]
     );
     if(info)
