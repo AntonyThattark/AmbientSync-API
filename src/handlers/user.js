@@ -1,4 +1,5 @@
-import { emailVerificationController, loginController, userRegisterController, verifyKeyController } from "../controllers/user.js";
+import { emailVerificationController, getUserListController, loginController, 
+            userRegisterController, verifyKeyController } from "../controllers/user.js";
 import env from "../config/keys.js";
 import jwt from "jsonwebtoken";
 //import { sendVerificationMail } from "../util/sendMail.js";
@@ -81,6 +82,22 @@ export const verifyKeyHandler = async (req, res) => {
             res.status(200).json({ successMessage: "Key Verification Successfull" })
         else
             res.status(500).json({ Message: "Key already taken or not found" })
+    }
+    catch (e) {
+        console.log("An unexpected error occured while verifying key ", e.message)
+        res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
+    }
+}
+
+
+export const getUserListHandler = async (req, res) => {
+
+    try {
+        const list = await getUserListController(req.params)
+        if (list!={})
+            res.status(200).json(list)
+        else
+            res.status(500).json(list)
     }
     catch (e) {
         console.log("An unexpected error occured while verifying key ", e.message)

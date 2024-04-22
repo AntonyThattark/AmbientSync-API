@@ -40,7 +40,8 @@ export const updateSettingsHandler = async (req, res) => {
 
 export const userPreferenceHandler = async (req, res) => {
     try {
-        req.body.id= req.user.userId;
+        if(!req.body.id)
+            req.body.id= req.user.userId;
         const prefer = await userPreferenceController(req.body)
         if (prefer) {
             res.status(200).json("User preference added successfully")

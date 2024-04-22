@@ -136,7 +136,12 @@ export const getRoomDetailsController = async (user) => {
 
 export const checkUserPrimaryController = async (user) => {
     let check = await checkUserPrimary(user)
-    if (check)
-        return check[0]
+    const det = { id: String(user.userId), room_id: user.roomId };
+    let prefer = await getPreference(det)
+    if (check) {
+        const ret = [check[0],prefer[0]]
+        console.log(ret)
+        return ret
+    }
     return 0
 }

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { addAccess, addRoom, addUser, getUserByUsername, updateUserDetails, validateKey, verifyKey, verifyToken, verifyUser } from "../models/user.js";
+import { addAccess, addRoom, addUser, getUserByUsername, getUserList, updateUserDetails, validateKey, verifyKey, verifyToken, verifyUser } from "../models/user.js";
 import { sendVerificationMail } from "../util/sendMail.js";
 import env from "../config/keys.js";
 
@@ -70,4 +70,10 @@ export const verifyKeyController = async (key) => {
     if (!verify[0].verified)
         return 1
     return 0
+}
+
+
+export const getUserListController = async (user) => {
+    const list= getUserList(user)
+    return list
 }

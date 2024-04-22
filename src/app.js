@@ -7,7 +7,7 @@ import {
 } from './handlers/preference.js';
 import { checkDatabaseConnection } from './util/MySQL.js';
 import env from './config/keys.js';
-import { emailVerificationHandler, userLoginHandler, userRegisterHandler, verifyKeyHandler } from './handlers/user.js';
+import { emailVerificationHandler, getUserListHandler, userLoginHandler, userRegisterHandler, verifyKeyHandler } from './handlers/user.js';
 import { userAuth } from './middleware/auth.js';
 import { createConnection } from './util/mqtt.js';
 
@@ -24,6 +24,7 @@ app.post('/user/emailverification', express.json(), emailVerificationHandler)
 
 app.put('/user/preferrence', express.json(), userAuth, userPreferenceHandler)
 
+app.get('/userslist/room/:room_id', getUserListHandler)
 app.get('/user/:id/rooms', getRoomDetailsHandler)
 app.get('/user/checkPrimary/:roomId',userAuth, checkUserPrimaryHandler)
 

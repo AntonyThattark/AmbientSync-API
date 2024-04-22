@@ -46,8 +46,8 @@ export const updatePreference = async (user) => {
         values.push(room_temp)
     }
 
-    const whereQuery = " WHERE users = '?' and room_id=?"
-    values.push(user.id , user.room_id)
+    const whereQuery = " WHERE users = ? and room_id=?"
+    values.push(String(user.id) , user.room_id)
 
     const sqlQuery = basicQuery + fields.join(",") + whereQuery;
 

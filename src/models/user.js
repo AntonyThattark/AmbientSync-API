@@ -57,68 +57,84 @@ export const addUser = async (user) => {
 
 
 export const verifyToken = async (token) => {
-    const verify =await pool.query(
+    const verify = await pool.query(
         "SELECT * FROM user WHERE user_id= ? and verification_key= ?",
         [token.userId, token.verificationKey]
     );
-    if(verify)
+    if (verify)
         return 1
     return 0
 }
 
 
 export const verifyUser = async (user) => {
-    const verify =await pool.query(
+    const verify = await pool.query(
         "UPDATE user SET verified = 1 WHERE user_id = ?",
         [user]
     );
-    if(verify)
+    if (verify)
         return 1
     return 0
 }
 
 
 export const verifyKey = async (key) => {
-    const verify =await pool.query(
+    const verify = await pool.query(
         "SELECT * FROM pkeys where product_key = ?",
         [key]
     );
-    if(verify)
+    if (verify)
         return verify[0]
     return 0
 }
 
 
 export const addRoom = async (roomName, id) => {
-    const add =await pool.query(
+    const add = await pool.query(
         "INSERT INTO room (room_name, primary_user_id) VALUES (?, ?)",
         [roomName, id]
     );
-    const roomId=await pool.query(
+    const roomId = await pool.query(
         "SELECT * FROM room WHERE primary_user_id = ?",
         [id]
     );
-    if(add)
+    if (add)
         return roomId
     return 0
 }
 
 export const addAccess = async (id, room_id) => {
-    const add =await pool.query(
+    const add = await pool.query(
         "INSERT INTO access (user_id, room_id) VALUES (?, ?)",
         [id, room_id]
     );
-    if(add)
+    if (add)
         return 1
     return 0
 }
 
 export const validateKey = async (key) => {
-    const validate =await pool.query(
+    const validate = await pool.query(
         "UPDATE pkeys SET verified = 1 WHERE product_key = ?",
         [key]
     );
-    if(validate)
+    if (validate)
         return 1
     return 0
+}
+
+export const getUserList = async (user) => {
+    const list = await pool.query(
+        "SELECT access.user_id, user.name FROM access, user WHERE access.room_id = ? AND access.user_id = user.user_id",
+        [user.room_id]
+    );
+    // const details = await pool.query(
+    //     "SELECT access.user_id, user.name FROM access, user WHERE access.room_id = ? AND access.user_id = user.user_id",
+    //     [user.room_id]
+    // );
+    if(list)
+        return list[0]
+    else
+        return {}
+
 }
