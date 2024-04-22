@@ -1,4 +1,6 @@
 import { emailVerificationController, getUserListController, loginController, 
+            secondaryEmailVerificationController, 
+            secondaryRegisterController, 
             userRegisterController, verifyKeyController } from "../controllers/user.js";
 import env from "../config/keys.js";
 import jwt from "jsonwebtoken";
@@ -103,4 +105,48 @@ export const getUserListHandler = async (req, res) => {
         console.log("An unexpected error occured while verifying key ", e.message)
         res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
     }
+}
+
+
+export const secondaryRegisterHandler = async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        if (!(name && email)) {
+            res.status(400).json({ errorMessage: "All input is required" });
+            return;
+        }
+
+        const register = await secondaryRegisterController(req.body); 
+        if (register) {
+            res.status(200).json({ successMessage: "OTP was successfully send" })
+            return;
+        }
+        res.status(500).json({ Message: "Username already taken" })
+    }
+    catch (error) {
+        console.log("An unexpected error occured while registering secondary user ", error.message)
+        res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
+    }
+}
+
+
+export const secondaryEmailVerificationHandler = async (req, res) => {
+
+    const {token, password}=req.body
+    if (!token || !password) {
+        return res.status(403).json({ errorMessage: "Insufficient details" });
+    }
+    try {
+        console.log(req.body)
+        const decoded = jwt.verify(token, env.authTokenKey);
+        console.log(decoded)
+        const verify= await secondaryEmailVerificationController(decoded, password)
+        if(verify)
+            res.status(200).json("Verification Successfull")
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(401).json({ errorMessage: "Invalid Token" });
+    }
+
 }

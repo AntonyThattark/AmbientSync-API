@@ -47,14 +47,34 @@ export const updateUserDetails = async (user) => {
 }
 
 export const addUser = async (user) => {
-    const { name, email, password } = user;
+    const { name, email, password, verificationKey } = user;
     const [result] = await pool.query(
-        "INSERT INTO user (name, email, password) VALUES (?,?,?)",
-        [name, email, password]
+        "INSERT INTO user (name, email, password, verification_key) VALUES (?,?,?,?)",
+        [name, email, password, verificationKey]
     );
     return result.insertId;
 }
 
+
+export const addSecondaryUser = async (user) => {
+    const { name, email } = user;
+    const [result] = await pool.query(
+        "INSERT INTO user (name, email, verification_key) VALUES (?,?,?)",
+        [name, email, verificationKey]
+    );
+    return result.insertId;
+}
+
+export const checkUserInRoom = async (user) => {
+    const check = await pool.query(
+        "SELECT * FROM access WHERE user_id = ? AND room_id = ?",
+        [user.user_id, user.room_id]
+    );
+    console.log(check[0])
+    if (check[0][0])
+        return 1
+    return 0
+}
 
 export const verifyToken = async (token) => {
     const verify = await pool.query(
@@ -136,5 +156,14 @@ export const getUserList = async (user) => {
         return list[0]
     else
         return {}
+}
 
+export const insertPassword = async (password,user) => {
+    const insert = await pool.query(
+        "UPDATE user SET password = ?, verified = 1 WHERE user_id = ?",
+        [password, user]
+    );
+    if (insert)
+        return 1
+    return 0
 }

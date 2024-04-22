@@ -7,7 +7,7 @@ import {
 } from './handlers/preference.js';
 import { checkDatabaseConnection } from './util/MySQL.js';
 import env from './config/keys.js';
-import { emailVerificationHandler, getUserListHandler, userLoginHandler, userRegisterHandler, verifyKeyHandler } from './handlers/user.js';
+import { emailVerificationHandler, getUserListHandler, secondaryEmailVerificationHandler, secondaryRegisterHandler, userLoginHandler, userRegisterHandler, verifyKeyHandler } from './handlers/user.js';
 import { userAuth } from './middleware/auth.js';
 import { createConnection } from './util/mqtt.js';
 
@@ -21,6 +21,8 @@ app.post('/user/register', express.json(), userRegisterHandler)
 app.post('/user/login', express.json(), userLoginHandler)
 app.get('/user/verifykey/:productkey', verifyKeyHandler)
 app.post('/user/emailverification', express.json(), emailVerificationHandler)
+app.post('/user/secondary/add', express.json(), userAuth, secondaryRegisterHandler)
+app.post('/user/secondaryUser/emailverification',express.json(), secondaryEmailVerificationHandler)
 
 app.put('/user/preferrence', express.json(), userAuth, userPreferenceHandler)
 
