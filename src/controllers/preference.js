@@ -133,6 +133,15 @@ export const getRoomDetailsController = async (user) => {
     return info
 }
 
+export const getPreferenceController = async (user) => {
+    //const occupants = await getOccupantsOfRoom(room)
+    let info = await getPreference(user)
+    if(info)
+        return info[0]
+    else
+        return {}
+}
+
 
 export const checkUserPrimaryController = async (user) => {
     let check = await checkUserPrimary(user)

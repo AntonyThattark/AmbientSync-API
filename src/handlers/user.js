@@ -1,4 +1,5 @@
 import { emailVerificationController, getUserListController, loginController, 
+            removeUserController, 
             secondaryEmailVerificationController, 
             secondaryRegisterController, 
             userRegisterController, verifyKeyController } from "../controllers/user.js";
@@ -148,5 +149,26 @@ export const secondaryEmailVerificationHandler = async (req, res) => {
         console.log(err)
         return res.status(401).json({ errorMessage: "Invalid Token" });
     }
+}
 
+export const removeUserHandler = async (req, res) => {
+
+    try {
+        const { roomId, email } = req.body;
+        if (!(roomId && email)) {
+            res.status(400).json({ errorMessage: "All input is required" });
+            return;
+        }
+
+        const remove = await removeUserController(req.body); 
+        if (remove) {
+            res.status(200).json({ successMessage: "access removed successfully" })
+            return;
+        }
+        res.status(500).json({ Message: "couldn't find user" })
+    }
+    catch (error) {
+        console.log("An unexpected error occured while registering secondary user ", error.message)
+        res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
+    }
 }

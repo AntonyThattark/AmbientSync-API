@@ -11,6 +11,17 @@ export const getUserByUsername = async (email) => {
     return {};
 }
 
+
+export const checkVerification = async (email) => {
+
+    const [rows, fields] = await pool.query("SELECT * FROM user WHERE email= ? AND verified = 1",
+        [email]);
+    if (rows)
+        return rows[0];
+    return {};
+}
+
+
 export const updateUserDetails = async (user) => {
     const { name, email, password, verificationKey } = user;
 
@@ -164,6 +175,39 @@ export const insertPassword = async (password,user) => {
         [password, user]
     );
     if (insert)
+        return 1
+    return 0
+}
+
+
+export const removeUser = async (user) => {
+    const pop = await pool.query(
+        "DELETE FROM access WHERE user_id = ? AND room_id = ?",
+        [user.userId, user.roomId]
+    );
+    if (pop)
+        return 1
+    return 0
+}
+
+
+export const checkOtherAccess = async (user) => {
+    const check = await pool.query(
+        "SELECT * FROM access WHERE user_id = ?",
+        [user.userId]
+    );
+    if (check[0][0])
+        return 1
+    return 0
+}
+
+
+export const updateUserValid = async (user) => {
+    const update = await pool.query(
+        "UPDATE user SET verified = 0 WHERE user_id = ?",
+        [user.userId]
+    );
+    if (update)
         return 1
     return 0
 }

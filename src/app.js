@@ -3,11 +3,12 @@ import express from 'express';
 import cors from 'cors';
 import {
     checkUserPrimaryHandler,
+    getPreferenceHandler,
     getRoomDetailsHandler, getRoomSettingsHandler, updateSettingsHandler, userPreferenceHandler,
 } from './handlers/preference.js';
 import { checkDatabaseConnection } from './util/MySQL.js';
 import env from './config/keys.js';
-import { emailVerificationHandler, getUserListHandler, secondaryEmailVerificationHandler, secondaryRegisterHandler, userLoginHandler, userRegisterHandler, verifyKeyHandler } from './handlers/user.js';
+import { emailVerificationHandler, getUserListHandler, removeUserHandler, secondaryEmailVerificationHandler, secondaryRegisterHandler, userLoginHandler, userRegisterHandler, verifyKeyHandler } from './handlers/user.js';
 import { userAuth } from './middleware/auth.js';
 import { createConnection } from './util/mqtt.js';
 
@@ -22,13 +23,15 @@ app.post('/user/login', express.json(), userLoginHandler)
 app.get('/user/verifykey/:productkey', verifyKeyHandler)
 app.post('/user/emailverification', express.json(), emailVerificationHandler)
 app.post('/user/secondary/add', express.json(), userAuth, secondaryRegisterHandler)
+app.post('/user/remove',express.json(), removeUserHandler)
 app.post('/user/secondaryUser/emailverification',express.json(), secondaryEmailVerificationHandler)
 
 app.put('/user/preferrence', express.json(), userAuth, userPreferenceHandler)
 
 app.get('/userslist/room/:room_id', getUserListHandler)
-app.get('/user/:id/rooms', getRoomDetailsHandler)
+app.get('/user/rooms',userAuth, getRoomDetailsHandler)
 app.get('/user/checkPrimary/:roomId',userAuth, checkUserPrimaryHandler)
+app.get('/users/:users_id/room/:room_id', getPreferenceHandler )
 
 app.put('/rooms/:room_id/users/:user_id/scan', updateSettingsHandler)
 app.get('/rooms/:room_id/settings', getRoomSettingsHandler)
