@@ -185,7 +185,7 @@ export const removeUser = async (user) => {
         "DELETE FROM access WHERE user_id = ? AND room_id = ?",
         [user.userId, user.roomId]
     );
-    if (pop)
+    if (pop[0].affectedRows)
         return 1
     return 0
 }
