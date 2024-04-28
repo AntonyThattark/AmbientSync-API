@@ -1,5 +1,6 @@
-import { emailVerificationController, getUserListController, loginController, 
+import { addRoomController, emailVerificationController, getUserListController, loginController, 
             removeUserController, 
+            removeValidationController, 
             secondaryEmailVerificationController, 
             secondaryRegisterController, 
             userRegisterController, verifyKeyController } from "../controllers/user.js";
@@ -61,9 +62,9 @@ export const emailVerificationHandler = async (req, res) => {
         return res.status(403).json({ errorMessage: "Insufficient details" });
     }
     try {
-        console.log(req.body)
+        //console.log(req.body)
         const decoded = jwt.verify(token, env.authTokenKey);
-        console.log(decoded)
+        //console.log(decoded)
         const verify= await emailVerificationController(decoded, roomName)
         if(verify)
             res.status(200).json("Verification Successfull")
@@ -169,6 +170,38 @@ export const removeUserHandler = async (req, res) => {
     }
     catch (error) {
         console.log("An unexpected error occured while registering secondary user ", error.message)
+        res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
+    }
+}
+
+
+export const removeValidationHandler = async (req, res) => {
+
+    try {
+        const body = { roomId: req.params.room_id, userId: req.params.user_id }
+        const verify = await removeValidationController(body)
+        if (verify)
+            res.status(200).json({ successMessage: "Validation removed Successfull" })        
+    }
+    catch (e) {
+        console.log("An unexpected error occured while removing verification ", e.message)
+        res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
+    }
+}
+
+export const addRoomHandler = async (req, res) => {
+
+    try {
+        req.body.userId=req.user.userId;
+        const add = await addRoomController(req.body)
+        if (add){
+            res.status(200).json({ successMessage: "New room added" })
+            return;
+        }
+        res.status(500).json({ Message: "Product Key not found" })  
+    }
+    catch (e) {
+        console.log("An unexpected error occured adding room ", e.message)
         res.status(500).json({ errorMessage: 'An unexpected error occured. Check server logs' });
     }
 }

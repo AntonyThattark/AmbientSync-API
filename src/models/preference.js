@@ -205,7 +205,8 @@ export const setUserOut = async (user) => {
 export const getRoomDetails = async (user) => {
 
     const info=await pool.query(
-        "SELECT room_id, room_name FROM preference, room WHERE users = ? and room.id=preference.room_id",
+        "SELECT room_id, room_name FROM access, room WHERE user_id = ? and room.id=access.room_id",
+        //"SELECT room_id, room_name FROM preference, room WHERE users = ? and room.id=preference.room_id",
         [String(user)]
     );
     if(info)

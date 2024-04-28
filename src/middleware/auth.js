@@ -11,7 +11,7 @@ export const userAuth = (req, res, next) => {
     }
     try {
         const decoded = jwt.verify(token.split(" ")[1], env.authTokenKey);
-        console.log(decoded)
+        // console.log(decoded)
         if (decoded) {
             req.user = decoded;
             return next();

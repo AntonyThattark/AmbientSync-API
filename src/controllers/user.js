@@ -1,9 +1,12 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { addAccess, addRoom, addSecondaryUser, addUser, checkOtherAccess, checkUserInRoom, checkVerification, getUserByUsername, getUserList, insertPassword, removeUser, updateUserDetails, updateUserValid, validateKey, verifyKey, verifyToken, verifyUser } from "../models/user.js";
+import { addAccess, addRoom, addSecondaryUser, addUser, checkOtherAccess, checkUserInRoom, checkVerification, 
+    getUserByUsername, getUserList, insertPassword, removeKeyValidation, removeRoom, removeUser, updateUserDetails, 
+    updateUserValid, validateKey, verifyKey, verifyToken, verifyUser } from "../models/user.js";
 import { sendSecondaryUserVerificationMail, sendVerificationMail } from "../util/sendMail.js";
 import env from "../config/keys.js";
 import { checkUserPrimary } from "../models/preference.js";
+import { getConnection } from "../util/mqtt.js";
 
 
 
@@ -38,9 +41,15 @@ export const emailVerificationController = async (decoded, roomName) => {
     const verify = await verifyToken(decoded)
     if (verify) {
         await verifyUser(decoded.userId)
-        const roomID = await addRoom(roomName, decoded.userId)
-        await addAccess(decoded.userId, roomID)
+        const keyDtl = await verifyKey(decoded.key)
+        await addRoom(keyDtl.id, roomName, decoded.userId)
+        await addAccess(decoded.userId, keyDtl.id)
         await validateKey(decoded.key)
+
+        mqttClient.publish("newUser", String(decoded.userId), { qos: 2 }, (err) => {
+            console.log("published")
+            if (err) throw err
+        })
         return 1
     }
     return 0
@@ -48,8 +57,8 @@ export const emailVerificationController = async (decoded, roomName) => {
 
 
 export const loginController = async (loginDetails) => {
-    
-    const checkVerified= await checkVerification(loginDetails.email);
+
+    const checkVerified = await checkVerification(loginDetails.email);
     const username = loginDetails.email;
     if (loginDetails && checkVerified && (await bcrypt.compare(loginDetails.password, checkVerified.password))) {
         const token = jwt.sign(
@@ -90,9 +99,9 @@ export const secondaryRegisterController = async (user) => {
             user.id = userExists.user_id
             await updateUserDetails(user)
         }
-        const check= await checkUserInRoom(user)
-            if(check)
-                return 0;
+        const check = await checkUserInRoom(user)
+        if (check)
+            return 0;
     }
     else
         await addSecondaryUser(user)
@@ -115,6 +124,11 @@ export const secondaryEmailVerificationController = async (decoded, password) =>
         password = await bcrypt.hash(password, 10);
         await insertPassword(password, decoded.userId)
         await addAccess(decoded.userId, decoded.room_id)
+        const mqttClient = getConnection()
+        mqttClient.publish("newUser", String(decoded.userId), { qos: 2 }, (err) => {
+            console.log("published")
+            if (err) throw err
+        })
         return 1
     }
     return 0
@@ -123,18 +137,49 @@ export const secondaryEmailVerificationController = async (decoded, password) =>
 
 export const removeUserController = async (user) => {
 
-    const popUser= await getUserByUsername(user.email)
-    popUser.roomId= user.roomId
-    popUser.userId= popUser.user_id
-    const checkPrimaryUser= await checkUserPrimary(popUser)
-    if(!checkPrimaryUser[0]){
-        const pop=await removeUser(popUser)
-        if(pop){
-            const access= await checkOtherAccess(popUser)
-            if(!access)
+    const popUser = await getUserByUsername(user.email)
+    popUser.roomId = user.roomId
+    popUser.userId = popUser.user_id
+    const checkPrimaryUser = await checkUserPrimary(popUser)
+    if (!checkPrimaryUser[0]) {
+        const pop = await removeUser(popUser)
+        if (pop) {
+            const access = await checkOtherAccess(popUser)
+            if (!access)
                 await updateUserValid(popUser)
             return 1;
         }
     }
     return 0;
+}
+
+
+export const removeValidationController = async (popUser) => {
+
+    const pop = await removeUser(popUser)
+    const primary = await checkUserPrimary(popUser)
+    if (primary) {
+        await removeRoom(popUser.roomId)
+        await removeKeyValidation(popUser.roomId)
+    }
+    if (pop) {
+        const access = await checkOtherAccess(popUser)
+        if (!access)
+            await updateUserValid(popUser)
+        return 1;
+    }
+
+    return 0
+}
+
+export const addRoomController = async (user) => {    
+    const check= await verifyKey(user.key)
+    if(!check[0].verified){
+        // console.log(user, check)
+        await addRoom(check[0].id, user.roomName, user.userId)
+        await addAccess(user.userId, check[0].id)
+        await validateKey(user.key)
+        return 1
+    }
+    return 0
 }

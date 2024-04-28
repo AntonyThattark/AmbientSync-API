@@ -120,27 +120,35 @@ export const verifyKey = async (key) => {
 }
 
 
-export const addRoom = async (roomName, id) => {
+export const addRoom = async (room_id, roomName, id) => {
     const add = await pool.query(
-        "INSERT INTO room (room_name, primary_user_id) VALUES (?, ?)",
-        [roomName, id]
+        "INSERT INTO room (id, room_name, primary_user_id) VALUES (?, ?, ?)",
+        [room_id, roomName, id]
     );
-    const roomId = await pool.query(
-        "SELECT * FROM room WHERE primary_user_id = ?",
-        [id]
-    );
+    // const roomId = await pool.query(
+    //     "SELECT * FROM room WHERE primary_user_id = ?",
+    //     [id]
+    // );
     if (add)
-        return roomId
+        return 1
+    // return roomId
     return 0
 }
 
 export const addAccess = async (id, room_id) => {
-    const add = await pool.query(
-        "INSERT INTO access (user_id, room_id) VALUES (?, ?)",
-        [id, room_id]
+    const check = await pool.query(
+        "SELECT * FROM access WHERE room_id = ? AND user_id = ?",
+        [room_id, id]
     );
-    if (add)
-        return 1
+    if (check) return 1
+    else {
+        const add = await pool.query(
+            "INSERT INTO access (user_id, room_id) VALUES (?, ?)",
+            [id, room_id]
+        );
+        if (add)
+            return 1
+    }
     return 0
 }
 
@@ -163,13 +171,13 @@ export const getUserList = async (user) => {
     //     "SELECT access.user_id, user.name FROM access, user WHERE access.room_id = ? AND access.user_id = user.user_id",
     //     [user.room_id]
     // );
-    if(list)
+    if (list)
         return list[0]
     else
         return {}
 }
 
-export const insertPassword = async (password,user) => {
+export const insertPassword = async (password, user) => {
     const insert = await pool.query(
         "UPDATE user SET password = ?, verified = 1 WHERE user_id = ?",
         [password, user]
@@ -206,6 +214,26 @@ export const updateUserValid = async (user) => {
     const update = await pool.query(
         "UPDATE user SET verified = 0 WHERE user_id = ?",
         [user.userId]
+    );
+    if (update)
+        return 1
+    return 0
+}
+
+export const removeRoom = async (room_id) => {
+    const pop = await pool.query(
+        "DELETE FROM room WHERE id = ? ",
+        [room_id]
+    );
+    if (pop[0].affectedRows)
+        return 1
+    return 0
+}
+
+export const removeKeyValidation = async (room_id) => {
+    const update = await pool.query(
+        "UPDATE pkeys SET verified = NULL WHERE id = ?",
+        [room_id]
     );
     if (update)
         return 1

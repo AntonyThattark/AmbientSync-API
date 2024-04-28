@@ -149,8 +149,9 @@ export const checkUserPrimaryController = async (user) => {
     let prefer = await getPreference(det)
     if (check) {
         const ret = [check[0],prefer[0]]
-        console.log(ret)
         return ret
     }
     return 0
 }
+
+
