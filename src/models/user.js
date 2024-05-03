@@ -68,7 +68,7 @@ export const addUser = async (user) => {
 
 
 export const addSecondaryUser = async (user) => {
-    const { name, email } = user;
+    const { name, email, verificationKey } = user;
     const [result] = await pool.query(
         "INSERT INTO user (name, email, verification_key) VALUES (?,?,?)",
         [name, email, verificationKey]
@@ -81,7 +81,7 @@ export const checkUserInRoom = async (user) => {
         "SELECT * FROM access WHERE user_id = ? AND room_id = ?",
         [user.user_id, user.room_id]
     );
-    console.log(check[0])
+    // console.log(check[0])
     if (check[0][0])
         return 1
     return 0
@@ -115,7 +115,7 @@ export const verifyKey = async (key) => {
         [key]
     );
     if (verify)
-        return verify[0]
+        return verify[0][0]
     return 0
 }
 
@@ -140,7 +140,7 @@ export const addAccess = async (id, room_id) => {
         "SELECT * FROM access WHERE room_id = ? AND user_id = ?",
         [room_id, id]
     );
-    if (check) return 1
+    if (check[0][0]) return 1
     else {
         const add = await pool.query(
             "INSERT INTO access (user_id, room_id) VALUES (?, ?)",

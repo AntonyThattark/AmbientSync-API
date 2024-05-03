@@ -46,6 +46,7 @@ export const emailVerificationController = async (decoded, roomName) => {
         await addAccess(decoded.userId, keyDtl.id)
         await validateKey(decoded.key)
 
+        const mqttClient = getConnection()
         mqttClient.publish("newUser", String(decoded.userId), { qos: 2 }, (err) => {
             console.log("published")
             if (err) throw err
@@ -174,10 +175,10 @@ export const removeValidationController = async (popUser) => {
 
 export const addRoomController = async (user) => {    
     const check= await verifyKey(user.key)
-    if(!check[0].verified){
+    if(!check.verified){
         // console.log(user, check)
-        await addRoom(check[0].id, user.roomName, user.userId)
-        await addAccess(user.userId, check[0].id)
+        await addRoom(check.id, user.roomName, user.userId)
+        await addAccess(user.userId, check.id)
         await validateKey(user.key)
         return 1
     }
