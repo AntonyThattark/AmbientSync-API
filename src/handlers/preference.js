@@ -24,6 +24,7 @@ export const getRoomSettingsHandler = async (req, res) => {
 export const updateSettingsHandler = async (req, res) => {
     try {
         const body = { room_id: req.params.room_id, id: req.params.user_id }
+        // console.log(body)
         const update = await updateSettingsController(body)
         if (update) {
             res.status(200).json("Update successfull")

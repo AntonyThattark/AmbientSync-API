@@ -114,9 +114,9 @@ export const verifyKey = async (key) => {
         "SELECT * FROM pkeys where product_key = ?",
         [key]
     );
-    if (verify)
+    if (verify[0][0])
         return verify[0][0]
-    return 0
+    return {verified : 1}
 }
 
 

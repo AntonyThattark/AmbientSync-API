@@ -31,7 +31,9 @@ export const userRegisterController = async (user) => {
         { expiresIn: env.authTokenExpiry }
     );
     //console.log(regUser,token)
-    await sendVerificationMail(user, token);
+    const verify = await verifyKey(user.key)
+    if(!verify.verified)
+        await sendVerificationMail(user, token);
     return true;
 }
 
@@ -79,7 +81,7 @@ export const loginController = async (loginDetails) => {
 export const verifyKeyController = async (key) => {
 
     const verify = await verifyKey(key)
-    if (!verify[0].verified)
+    if (!verify.verified)
         return 1
     return 0
 }

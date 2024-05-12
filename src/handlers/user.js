@@ -139,9 +139,9 @@ export const secondaryEmailVerificationHandler = async (req, res) => {
         return res.status(403).json({ errorMessage: "Insufficient details" });
     }
     try {
-        console.log(req.body)
+        //console.log(req.body)
         const decoded = jwt.verify(token, env.authTokenKey);
-        console.log(decoded)
+        //console.log(decoded)
         const verify= await secondaryEmailVerificationController(decoded, password)
         if(verify)
             res.status(200).json("Verification Successfull")
